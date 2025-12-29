@@ -21,18 +21,54 @@ npm run test:coverage # Run tests with coverage report
 
 ## Architecture
 
-**Single-file app structure**: The entire application lives in `src/App.tsx`. All views (Home, CrashMode, Rest, Fuel, Animals, Pacing, Notes) are implemented as components within this file. Navigation is managed via React state (`useState<ViewType>`).
+**Modular file structure**: The application is organized into focused modules:
+
+```
+src/
+├── App.tsx                    # Pure routing (~70 lines)
+├── types/index.ts             # TypeScript interfaces
+├── constants/
+│   ├── animalFacts.ts         # 73 animal/Claude facts
+│   └── presetActivities.ts    # Spoon budget presets
+├── styles/
+│   └── buttonVariants.ts      # Button styling constants
+├── utils/
+│   ├── audio.ts               # Web Audio API chime
+│   └── dateFormatters.ts      # Timer/timestamp formatting
+├── hooks/
+│   ├── useLocalStorage.ts     # Generic localStorage hook
+│   └── useSpeechRecognition.ts # Voice input hook
+└── components/
+    ├── ui/
+    │   ├── Button.tsx         # Variant-based button
+    │   ├── Header.tsx         # Navigation header
+    │   └── RatingScale.tsx    # 1-5 rating input
+    └── views/
+        ├── HomeView.tsx       # Main navigation
+        ├── CrashModeView.tsx  # Blackout screen
+        ├── RestView.tsx       # 15-min timer + breathing
+        ├── BreathingExercise.tsx # 4-7-8 pattern
+        ├── FuelView.tsx       # Hydration/protein tips
+        ├── PacingView.tsx     # 50% rule reminder
+        ├── NotesView.tsx      # Voice-enabled notes
+        ├── AnimalCheerView.tsx # Random animal facts
+        ├── SpoonBudgetView.tsx # Energy tracking
+        └── SymptomCheckView.tsx # Fog/fatigue check-in
+```
 
 **Key features by view**:
 
 - **CrashModeView**: Full-screen blackout for sensory deprivation
-- **RestView**: 15-minute timer with Web Audio API chime notification
+- **RestView**: 15-minute timer with Web Audio API chime + 4-7-8 breathing
 - **NotesView**: localStorage-persisted notes with optional SpeechRecognition dictation
-- **AnimalCheerView**: Randomized animal facts (Ken Allen, rabbits, gibbons, etc.)
+- **AnimalCheerView**: Randomized animal facts (Ken Allen, rabbits, gibbons, Claude, etc.)
+- **SpoonBudgetView**: Spoon theory energy tracking with preset activities
+- **SymptomCheckView**: Daily fog/fatigue 1-5 rating with yesterday comparison
+- **HomeView**: Bad Day Mode toggle hides non-essential features
 
 **PWA configuration**: `vite-plugin-pwa` handles service worker generation and manifest. Icons in `public/pwa-*.png`.
 
-**Testing**: Vitest with jsdom environment. Tests in `src/__tests__/`. Setup file at `src/test/setup.ts` mocks localStorage, AudioContext, and SpeechRecognition APIs.
+**Testing**: Vitest with jsdom environment. 113 tests in `src/__tests__/`. Setup file at `src/test/setup.ts` mocks localStorage, AudioContext, and SpeechRecognition APIs.
 
 ## Code Standards
 
@@ -40,3 +76,4 @@ npm run test:coverage # Run tests with coverage report
 - Prettier + ESLint + Husky pre-commit hooks via lint-staged
 - Tailwind CSS utility classes for all styling (no separate CSS modules)
 - React 19 with TypeScript strict mode
+- 100% privacy: All data stored in localStorage, no network calls
