@@ -12,6 +12,14 @@ import {
   SymptomCheckView,
   HomeView,
 } from './components/views';
+import { usePWAInstall } from './hooks/usePWAInstall';
+
+interface PWAInstallState {
+  canInstall: boolean;
+  isInstalled: boolean;
+  isIOS: boolean;
+  install: () => Promise<void>;
+}
 
 // View routing helper
 const renderView = (
@@ -20,6 +28,7 @@ const renderView = (
   badDayMode: boolean,
   toggleBadDayMode: () => void,
   setView: (v: ViewType) => void,
+  pwaInstall: PWAInstallState,
 ) => {
   const views: Record<ViewType, React.ReactNode> = {
     home: (
@@ -27,6 +36,7 @@ const renderView = (
         onNavigate={setView}
         badDayMode={badDayMode}
         onToggleBadDayMode={toggleBadDayMode}
+        pwaInstall={pwaInstall}
       />
     ),
     crash: <CrashModeView onBack={goHome} />,
@@ -46,6 +56,7 @@ function App() {
   const [badDayMode, setBadDayMode] = useState(() => {
     return localStorage.getItem('bad_day_mode') === 'true';
   });
+  const pwaInstall = usePWAInstall();
 
   const toggleBadDayMode = () => {
     const newValue = !badDayMode;
@@ -62,7 +73,14 @@ function App() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen min-h-[100dvh] p-6 relative flex flex-col">
-      {renderView(view, goHome, badDayMode, toggleBadDayMode, setView)}
+      {renderView(
+        view,
+        goHome,
+        badDayMode,
+        toggleBadDayMode,
+        setView,
+        pwaInstall,
+      )}
     </div>
   );
 }

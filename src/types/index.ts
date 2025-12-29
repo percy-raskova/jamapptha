@@ -73,4 +73,10 @@ export interface HomeViewProps {
   onNavigate: (view: ViewType) => void;
   badDayMode: boolean;
   onToggleBadDayMode: () => void;
+  pwaInstall: {
+    canInstall: boolean;
+    isInstalled: boolean;
+    isIOS: boolean;
+    install: () => Promise<void>;
+  };
 }
