@@ -22,10 +22,11 @@ export const HomeView = ({
   pwaInstall,
 }: HomeViewProps) => {
   const [showIOSHelp, setShowIOSHelp] = useState(false);
+  const [showDesktopHelp, setShowDesktopHelp] = useState(false);
   const { canInstall, isInstalled, isIOS, install } = pwaInstall;
 
-  // Show install option if not installed and either can install or is iOS
-  const showInstall = !isInstalled && (canInstall || isIOS);
+  // Always show install option when not installed
+  const showInstall = !isInstalled;
 
   return (
     <div className="page-transition flex-1 flex flex-col">
@@ -180,7 +181,15 @@ export const HomeView = ({
         {/* Install App prompt */}
         {showInstall && (
           <button
-            onClick={isIOS ? () => setShowIOSHelp(true) : install}
+            onClick={() => {
+              if (isIOS) {
+                setShowIOSHelp(true);
+              } else if (canInstall) {
+                install();
+              } else {
+                setShowDesktopHelp(true);
+              }
+            }}
             className="mt-6 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] transition-colors"
           >
             <Download size={18} />
@@ -229,6 +238,56 @@ export const HomeView = ({
               </ol>
               <button
                 onClick={() => setShowIOSHelp(false)}
+                className="mt-6 w-full py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Desktop Install Instructions Modal */}
+        {showDesktopHelp && (
+          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-[var(--bg-surface)] rounded-2xl p-6 max-w-sm w-full relative">
+              <button
+                onClick={() => setShowDesktopHelp(false)}
+                className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
+                aria-label="Close"
+              >
+                <X size={20} />
+              </button>
+              <h3 className="text-lg font-bold text-[var(--text-primary)] mb-4">
+                Install on Desktop
+              </h3>
+              <ol className="space-y-3 text-[var(--text-secondary)] text-sm">
+                <li className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--bg-elevated)] flex items-center justify-center text-xs font-bold">
+                    1
+                  </span>
+                  <span>
+                    Look for the install icon{' '}
+                    <Download size={14} className="inline mx-1" /> in your
+                    browser&apos;s address bar
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--bg-elevated)] flex items-center justify-center text-xs font-bold">
+                    2
+                  </span>
+                  <span>
+                    Or use browser menu → &ldquo;Install Brainfog&rdquo;
+                  </span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--bg-elevated)] flex items-center justify-center text-xs font-bold">
+                    3
+                  </span>
+                  <span>Works best in Chrome, Edge, or Brave</span>
+                </li>
+              </ol>
+              <button
+                onClick={() => setShowDesktopHelp(false)}
                 className="mt-6 w-full py-3 rounded-xl bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors"
               >
                 Got it
