@@ -3,7 +3,7 @@ import {
   Moon,
   Mic,
   ShieldAlert,
-  Battery,
+  Droplets,
   Wind,
   Smile,
   Gauge,
@@ -100,7 +100,7 @@ export const HomeView = ({
               variant="fuel"
               className="h-full py-7"
             >
-              <Battery
+              <Droplets
                 size={36}
                 className="text-emerald-400"
                 strokeWidth={1.5}
